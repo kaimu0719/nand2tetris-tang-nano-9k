@@ -1,3 +1,5 @@
+`ifndef DMUX_V
+`define DMUX_V
 `default_nettype none
 
 module DMux(
@@ -13,3 +15,4 @@ module DMux(
 	and(b, in, sel);
 
 endmodule
+`endif
