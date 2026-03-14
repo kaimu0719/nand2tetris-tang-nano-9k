@@ -1,5 +1,3 @@
-`ifndef MUX_V
-`define MUX_V
 `default_nettype none
 
 module Mux(
@@ -16,4 +14,3 @@ module Mux(
 	or(out, a_and_not_sel, b_and_sel);
 
 endmodule
-`endif

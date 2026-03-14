@@ -1,8 +1,4 @@
-`ifndef MUX4WAY16_V
-`define MUX4WAY16_V
 `default_nettype none
-
-`include "Mux16.v"
 
 module Mux4Way16(
 	input [15:0] a,
@@ -19,4 +15,3 @@ module Mux4Way16(
 	Mux16 MUX_OUT(.a(ab), .b(cd), .sel(sel[1]), .out(out));
 
 endmodule
-`endif

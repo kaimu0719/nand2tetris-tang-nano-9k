@@ -1,7 +1,5 @@
 `default_nettype none
 
-`include "../Mux8Way16.v"
-
 module top(
   input clk,
   input btn1,

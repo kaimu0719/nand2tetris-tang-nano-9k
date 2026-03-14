@@ -1,7 +1,5 @@
 `default_nettype none
 
-`include "../Xor.v"
-
 module top(
   input clk,
   input btn1,

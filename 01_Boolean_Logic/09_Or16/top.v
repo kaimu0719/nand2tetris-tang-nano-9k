@@ -1,7 +1,5 @@
 `default_nettype none
 
-`include "../Or16.v"
-
 module top(
   input clk,
   output [5:0] led

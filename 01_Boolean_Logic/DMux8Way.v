@@ -1,8 +1,5 @@
 `default_nettype none
 
-`include "DMux.v"
-`include "DMux4Way.v"
-
 module DMux8Way(
 	input in,
 	input [2:0] sel,
