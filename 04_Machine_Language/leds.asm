@@ -1,0 +1,7 @@
+(LOOP)
+@BUT
+D=M
+@LED
+M=D
+@LOOP
+0;JMP
