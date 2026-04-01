@@ -39,7 +39,7 @@ module Memory #(
   // Keyboard (0x6000, read-only, separate from I/O bus)
   input [15:0] keyboard,
 
-  output reg [15:0] out,
+  output [15:0] out,
 
   // Screen dual-port: CPU writes, display controller reads independently
   input [SCR_ADDR_BITS-1:0] screen_raddr,
@@ -47,21 +47,28 @@ module Memory #(
 );
 
   // ---- Address decode ----
-  wire ram_sel = (address[14:12] == 3'b000); // 0x0000-0x0FFF
-  wire io_sel = (address[14:4]  == 11'b001_0000_0000); // 0x1000-0x100F
-  wire screen_sel = (address[14] && !address[13]); // 0x4000-0x5FFF
-  wire kbd_sel = (address[14:12] == 3'b110); // 0x6000-0x6FFF
+  wire ram_sel    = (address[14:12] == 3'b000);            // 0x0000-0x0FFF
+  wire io_sel     = (address[14:4]  == 11'b001_0000_0000); // 0x1000-0x100F
+  wire screen_sel = (address[14] && !address[13]);          // 0x4000-0x5FFF
+  wire kbd_sel    = (address[14:12] == 3'b110);             // 0x6000-0x6FFF
 
   // ---- I/O bus (combinational) ----
   assign io_load = load && io_sel;
   assign io_addr = address[3:0];
-  assign io_out = in;
+  assign io_out  = in;
 
   // ---- RAM ----
   reg [15:0] ram [0:RAM_DEPTH-1];
 
   // ---- Screen ----
   reg [15:0] screen [0:SCR_DEPTH-1];
+
+  // --- CPU read (combinational, required by HACK architecture) ---
+  assign out = ram_sel    ? ram[address[RAM_ADDR_BITS-1:0]]    :
+               screen_sel ? screen[address[SCR_ADDR_BITS-1:0]] :
+               io_sel     ? io_in                              :
+               kbd_sel    ? keyboard                           :
+                            16'h0000;
 
   always @(posedge clk) begin
 
@@ -74,14 +81,7 @@ module Memory #(
 
     // I/O writes are handled by external device modules via io_load/io_addr/io_out
 
-    // --- CPU read (1-cycle latency for BSRAM) ---
-    if      (ram_sel)    out <= ram[address[RAM_ADDR_BITS-1:0]];
-    else if (screen_sel) out <= screen[address[SCR_ADDR_BITS-1:0]];
-    else if (io_sel)     out <= io_in;
-    else if (kbd_sel)    out <= keyboard;
-    else                 out <= 16'h0000;
-
-    // --- Display controller read ---
+    // --- Display controller read (synchronous, 1-cycle latency) ---
     screen_rdata <= screen[screen_raddr];
 
   end
